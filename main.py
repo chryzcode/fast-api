@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Path
+from typing import Optional
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -6,9 +8,14 @@ students = {
     1: {
         "name": "John",
         "age": 20,
-        "classs": "year 12"
+        "year": "year 12"
     },
 }
+
+class Students(BaseModel):
+    name: str
+    age: int
+    year: str
 
 @app.get("/")
 def index():
@@ -31,3 +38,13 @@ def get_student(name: str):
         if students[student_id]["name"] == name:
             return students[student_id]
     return {"message": "Student not found"}
+
+
+# create student
+@app.post("/create-student/{student_id}")
+def create_student(student_id: int, student: Students):
+    students[student_id] = student
+    return students[student_id]
+
+
+ 
